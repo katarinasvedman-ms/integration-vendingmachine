@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "keyvault_function_new": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7184",
+      "launchBrowser": false
+    }
+  }
+}

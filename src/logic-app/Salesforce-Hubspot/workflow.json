@@ -1,0 +1,82 @@
+{
+  "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "actions": {
+          "For_each": {
+              "type": "Foreach",
+              "foreach": "@body('HTTP')",
+              "actions": {
+                  "Transform_using_Data_Mapper_XSLT": {
+                      "type": "Xslt",
+                      "kind": "DataMapper",
+                      "inputs": {
+                          "content": "@items('For_each')",
+                          "map": {
+                              "source": "LogicApp",
+                              "name": "map1.xslt"
+                          }
+                      }
+                  },
+                  "HTTP_1": {
+                      "type": "Http",
+                      "inputs": {
+                          "uri": "https://api.hubapi.com/crm/v3/objects/contacts",
+                          "method": "POST",
+                          "headers": {
+                              "Authorization": "Bearer @{parameters('hubspot-accesstoken')}",
+                              "Content-Type": "application/json"
+                          },
+                          "body": "@body('Transform_using_Data_Mapper_XSLT')"
+                      },
+                      "runAfter": {
+                          "Transform_using_Data_Mapper_XSLT": [
+                              "SUCCEEDED"
+                          ]
+                      },
+                      "runtimeConfiguration": {
+                          "contentTransfer": {
+                              "transferMode": "Chunked"
+                          }
+                      }
+                  }
+              },
+              "runAfter": {
+                  "HTTP": [
+                      "SUCCEEDED"
+                  ]
+              }
+          },
+          "HTTP": {
+              "type": "Http",
+              "inputs": {
+                  "uri": "https://api.hubapi.com/crm/v3/objects/contacts",
+                  "method": "GET",
+                  "headers": {
+                      "Authorization": "Bearer ${@{parameters('hubspot-accesstoken')}}",
+                      "Content-Type": "application/json"
+                  }
+              },
+              "runAfter": {},
+              "runtimeConfiguration": {
+                  "contentTransfer": {
+                      "transferMode": "Chunked"
+                  }
+              }
+          }
+      },
+      "contentVersion": "1.0.0.0",
+      "outputs": {},
+      "triggers": {
+          "Recurrence": {
+              "type": "Recurrence",
+              "recurrence": {
+                  "interval": 3,
+                  "frequency": "Minute",
+                  "timeZone": "W. Europe Standard Time",
+                  "startTime": "2024-09-07T14:00:00Z"
+              }
+          }
+      }
+  },
+  "kind": "Stateful"
+}

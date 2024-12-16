@@ -1,0 +1,14 @@
+{
+  "managedApiConnections": {
+    "salesforce": {
+      "api": {
+        "id": "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/providers/Microsoft.Web/locations/@{appsetting('WORKFLOWS_LOCATION_NAME')}/managedApis/salesforce"
+      },
+      "connection": {
+        "id": "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/salesforce-2"
+      },
+      "connectionRuntimeUrl": "@parameters('salesforce-ConnectionRuntimeUrl')",
+      "authentication": "@parameters('salesforce-Authentication')"
+    }
+  }
+}

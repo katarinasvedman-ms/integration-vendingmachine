@@ -1,0 +1,86 @@
+{
+  "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "actions": {
+          "Transform_using_Data_Mapper_XSLT": {
+              "type": "Xslt",
+              "kind": "DataMapper",
+              "inputs": {
+                  "content": "@triggerBody()",
+                  "map": {
+                      "source": "LogicApp",
+                      "name": "map1.xslt"
+                  }
+              },
+              "runAfter": {}
+          },
+          "Update_record_(V3)": {
+              "type": "ApiConnection",
+              "inputs": {
+                  "host": {
+                      "connection": {
+                          "referenceName": "salesforce-1"
+                      }
+                  },
+                  "method": "patch",
+                  "body": "@body('Transform_using_Data_Mapper_XSLT')",
+                  "path": "/v3/datasets/default/tables/@{encodeURIComponent(encodeURIComponent('Customer'))}/items/@{encodeURIComponent(encodeURIComponent('1'))}"
+              },
+              "runAfter": {
+                  "Transform_using_Data_Mapper_XSLT": [
+                      "SUCCEEDED"
+                  ]
+              }
+          }
+      },
+      "contentVersion": "1.0.0.0",
+      "outputs": {},
+      "triggers": {
+          "When_a_HTTP_request_is_received": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                  "schema": {
+                      "type": "object",
+                      "properties": {
+                          "appId": {
+                              "type": "integer"
+                          },
+                          "eventId": {
+                              "type": "integer"
+                          },
+                          "subscriptionId": {
+                              "type": "integer"
+                          },
+                          "portalId": {
+                              "type": "integer"
+                          },
+                          "occurredAt": {
+                              "type": "integer"
+                          },
+                          "subscriptionType": {
+                              "type": "string"
+                          },
+                          "attemptNumber": {
+                              "type": "integer"
+                          },
+                          "objectId": {
+                              "type": "integer"
+                          },
+                          "changeSource": {
+                              "type": "string"
+                          },
+                          "propertyName": {
+                              "type": "string"
+                          },
+                          "propertyValue": {
+                              "type": "string"
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  },
+  "kind": "Stateful"
+}
